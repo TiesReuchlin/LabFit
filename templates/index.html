@@ -11,7 +11,7 @@
     <div class="container">
         <span class="badge">Physics data analysis</span>
         <h1>LabFit</h1>
-        <p>Upload or attach data and receive a best fit, parameter insecurities, R², residuals, and a graph.</p>
+        <p>Upload or paste data and receive a best fit, parameter errors, R², residuals, and a final graph.</p>
     </div>
 </header>
 
@@ -21,9 +21,9 @@
         <form method="POST" enctype="multipart/form-data">
             <label for="csv_file">Upload CSV-file</label>
             <input id="csv_file" name="csv_file" type="file" accept=".csv,.txt">
-            <p class="hint">Expected collumns: <code>x</code>, <code>y</code> en optioneel <code>sigma_x</code>, <code>sigma_y</code>.</p>
+            <p class="hint">Expected collumns: <code>x</code>, <code>y</code> and optional <code>sigma_x</code>, <code>sigma_y</code>.</p>
 
-            <div class="separator"><span>of</span></div>
+            <div class="separator"><span>or</span></div>
 
             <label for="pasted_data">Paste data</label>
             <textarea id="pasted_data" name="pasted_data" rows="9" spellcheck="false">{{ pasted_data }}</textarea>
@@ -38,16 +38,16 @@
 
             <div class="two-columns">
                 <div>
-                    <label for="x_label">Label x-as</label>
+                    <label for="x_label">Label x-axis</label>
                     <input id="x_label" name="x_label" value="{{ x_label }}">
                 </div>
                 <div>
-                    <label for="y_label">Label y-as</label>
+                    <label for="y_label">Label y-axis</label>
                     <input id="y_label" name="y_label" value="{{ y_label }}">
                 </div>
             </div>
 
-            <label for="plot_title">Graphtitle</label>
+            <label for="plot_title">Graph title</label>
             <input id="plot_title" name="plot_title" value="{{ plot_title }}">
 
             <button type="submit">Analyse data</button>
@@ -96,7 +96,7 @@
             <section class="card">
                 <h2>Text for report</h2>
                 <textarea id="report-text" rows="7" readonly>{{ result.report_text }}</textarea>
-                <button class="secondary" type="button" onclick="copyReport()">Kopieer tekst</button>
+                <button class="secondary" type="button" onclick="copyReport()">Copy text</button>
             </section>
         {% else %}
             <section class="card empty-state">
