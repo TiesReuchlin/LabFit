@@ -91,7 +91,7 @@ def normalise_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = df.rename(columns=renamed)
 
     if "x" not in df.columns or "y" not in df.columns:
-        raise ValueError("De data moet minimaal kolommen met de namen x en y bevatten.")
+        raise ValueError("The data must contain at least three collumns with the names x en y.")
 
     for optional in ("sigma_x", "sigma_y"):
         if optional not in df.columns:
@@ -103,12 +103,12 @@ def normalise_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.dropna(subset=["x", "y"])
     if len(df) < 3:
-        raise ValueError("Gebruik minimaal drie geldige meetpunten.")
+        raise ValueError("Input at least three data points.")
 
     for column in ("sigma_x", "sigma_y"):
         invalid = df[column].notna() & (df[column] <= 0)
         if invalid.any():
-            raise ValueError(f"Alle waarden in {column} moeten groter zijn dan nul.")
+            raise ValueError(f"All values in {column} have to be greater than zero.")
 
     return df
 
@@ -122,7 +122,7 @@ def read_input_data() -> pd.DataFrame:
     elif pasted:
         raw = pasted
     else:
-        raise ValueError("Upload een CSV-bestand of plak meetgegevens in het tekstvak.")
+        raise ValueError("Upload a CSV-file or input data in textbox.")
 
     # Auto-detect comma, semicolon, tab, or whitespace-separated input.
     try:
@@ -162,7 +162,7 @@ def run_fit(df: pd.DataFrame, model_name: str) -> dict:
     sy = df["sigma_y"].to_numpy(dtype=float)
 
     if model_name == "power" and np.any(x <= 0):
-        raise ValueError("Voor een power-law fit moeten alle x-waarden groter zijn dan nul.")
+        raise ValueError("All values of x needs to be larger than zero for a power-law fit.")
 
     model_info = MODELS[model_name]
     model = odr.Model(model_info["func"])
@@ -179,7 +179,7 @@ def run_fit(df: pd.DataFrame, model_name: str) -> dict:
     ).run()
 
     if fit.info > 4 or not np.all(np.isfinite(fit.beta)):
-        raise ValueError("De fit convergeerde niet. Controleer de data of probeer een ander model.")
+        raise ValueError("The fit does not converge. Check data or try different model.")
 
     beta = fit.beta
     parameter_errors = fit.sd_beta
@@ -243,13 +243,13 @@ def make_report_text(model_label: str, parameters: list[dict], r_squared: float,
         f"{item['name']} = {item['value']:.4g} ± {item['error']:.2g}"
         for item in parameters
     )
-    r2_text = f"{r_squared:.4f}" if np.isfinite(r_squared) else "niet gedefinieerd"
+    r2_text = f"{r_squared:.4f}" if np.isfinite(r_squared) else "undefined"
     return (
-        f"De meetgegevens zijn gefit met het model {model_label}. "
-        f"De fitparameters zijn {parameter_text}. "
-        f"De kwaliteit van de fit wordt beschreven door R² = {r2_text} "
-        f"en RMSE = {rmse:.4g}. Controleer ook de residuen om te beoordelen "
-        "of het gekozen model systematische afwijkingen vertoont."
+        f"The data is fitted with the model {model_label}. "
+        f"The fitparameters are {parameter_text}. "
+        f"The quality of the fit is described by R² = {r2_text} "
+        f"en RMSE = {rmse:.4g}. Check the residuals to conclude "
+        "whether the fit shows a systematic error."
     )
 
 
@@ -265,12 +265,12 @@ def make_plot(result: dict, x_label: str, y_label: str, title: str) -> bytes:
         yerr=sy,
         fmt="o",
         capsize=3,
-        label="Meetdata",
+        label="data",
     )
     ax.plot(result["x_plot"], result["y_plot"], label="Fit")
     ax.set_xlabel(x_label or "x")
     ax.set_ylabel(y_label or "y")
-    ax.set_title(title or "LabFit-resultaat")
+    ax.set_title(title or "LabFit-result")
     ax.grid(True, alpha=0.25)
     ax.legend()
     fig.tight_layout()
@@ -313,7 +313,7 @@ def home():
         "pasted_data": "x,y,sigma_x,sigma_y\n1,2.1,0.05,0.10\n2,4.0,0.05,0.12\n3,6.2,0.05,0.15\n4,8.1,0.05,0.16",
         "x_label": "x",
         "y_label": "y",
-        "plot_title": "Meetdata met fit",
+        "plot_title": "measured data with fit",
     }
 
     if request.method == "POST":
@@ -322,7 +322,7 @@ def home():
             "pasted_data": request.form.get("pasted_data", ""),
             "x_label": request.form.get("x_label", "x"),
             "y_label": request.form.get("y_label", "y"),
-            "plot_title": request.form.get("plot_title", "Meetdata met fit"),
+            "plot_title": request.form.get("plot_title", "Data with fit"),
         })
         try:
             df = read_input_data()
@@ -340,7 +340,7 @@ def home():
             context["error"] = str(exc)
         except Exception as exc:
             app.logger.exception("Unexpected fitting error")
-            context["error"] = f"Onverwachte fout tijdens het fitten: {exc}"
+            context["error"] = f"Unexpected fitting error: {exc}"
 
     return render_template("index.html", **context)
 
