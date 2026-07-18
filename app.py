@@ -246,9 +246,9 @@ def make_report_text(model_label: str, parameters: list[dict], r_squared: float,
     r2_text = f"{r_squared:.4f}" if np.isfinite(r_squared) else "undefined"
     return (
         f"The data is fitted with the model {model_label}. "
-        f"The fitparameters are {parameter_text}. "
-        f"The quality of the fit is described by R² = {r2_text} "
-        f"en RMSE = {rmse:.4g}. Check the residuals to conclude "
+        f"Here, the fitparameters are {parameter_text}. "
+        f"The quality of the fit is R² = {r2_text} "
+        f"and the RMSE = {rmse:.4g}. Check the residuals to conclude "
         "whether the fit shows a systematic error."
     )
 
