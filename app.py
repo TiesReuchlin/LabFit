@@ -154,7 +154,7 @@ def initial_guess(model_name: str, x: np.ndarray, y: np.ndarray) -> list[float]:
 
 def run_fit(df: pd.DataFrame, model_name: str) -> dict:
     if model_name not in MODELS:
-        raise ValueError("Kies een geldig fitmodel.")
+        raise ValueError("Choose an existing model.")
 
     x = df["x"].to_numpy(dtype=float)
     y = df["y"].to_numpy(dtype=float)
