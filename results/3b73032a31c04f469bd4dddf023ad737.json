@@ -1,0 +1,21 @@
+{
+  "model": "Lineair: y = ax + b",
+  "equation": "y = (2.02795)x + (0.0344536)",
+  "parameters": [
+    {
+      "name": "a",
+      "value": 2.0279509482619353,
+      "error": 0.026008170774270693,
+      "formatted": "2.02795 ± 0.026"
+    },
+    {
+      "name": "b",
+      "value": 0.03445357819599687,
+      "error": 0.07732534674271105,
+      "formatted": "0.0344536 ± 0.077"
+    }
+  ],
+  "r_squared": 0.999537781916517,
+  "rmse": 0.06173544710429417,
+  "report_text": "De meetgegevens zijn gefit met het model Lineair: y = ax + b. De fitparameters zijn a = 2.028 ± 0.026, b = 0.03445 ± 0.077. De kwaliteit van de fit wordt beschreven door R² = 0.9995 en RMSE = 0.06174. Controleer ook de residuen om te beoordelen of het gekozen model systematische afwijkingen vertoont."
+}
