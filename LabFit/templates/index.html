@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabFit — Physics data fitting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="hero">
+    <div class="container">
+        <span class="badge">Physics data analysis</span>
+        <h1>LabFit</h1>
+        <p>Upload of plak meetdata en ontvang direct een fit, parameteronzekerheden, R², residuen en een publiceerbare grafiek.</p>
+    </div>
+</header>
+
+<main class="container layout">
+    <section class="card input-card">
+        <h2>1. Voer je meetdata in</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="csv_file">CSV-bestand uploaden</label>
+            <input id="csv_file" name="csv_file" type="file" accept=".csv,.txt">
+            <p class="hint">Verwachte kolommen: <code>x</code>, <code>y</code> en optioneel <code>sigma_x</code>, <code>sigma_y</code>.</p>
+
+            <div class="separator"><span>of</span></div>
+
+            <label for="pasted_data">Data plakken</label>
+            <textarea id="pasted_data" name="pasted_data" rows="9" spellcheck="false">{{ pasted_data }}</textarea>
+
+            <h2>2. Kies model en labels</h2>
+            <label for="model">Fitmodel</label>
+            <select id="model" name="model">
+                {% for key, model in models.items() %}
+                    <option value="{{ key }}" {% if key == selected_model %}selected{% endif %}>{{ model.label }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="two-columns">
+                <div>
+                    <label for="x_label">Label x-as</label>
+                    <input id="x_label" name="x_label" value="{{ x_label }}">
+                </div>
+                <div>
+                    <label for="y_label">Label y-as</label>
+                    <input id="y_label" name="y_label" value="{{ y_label }}">
+                </div>
+            </div>
+
+            <label for="plot_title">Grafiektitel</label>
+            <input id="plot_title" name="plot_title" value="{{ plot_title }}">
+
+            <button type="submit">Analyseer data</button>
+        </form>
+    </section>
+
+    <section class="results-column">
+        {% if error %}
+            <div class="card error-card">
+                <h2>De analyse kon niet worden uitgevoerd</h2>
+                <p>{{ error }}</p>
+            </div>
+        {% elif result %}
+            <section class="card">
+                <div class="result-heading">
+                    <div>
+                        <span class="badge success">Fit voltooid</span>
+                        <h2>{{ result.model_label }}</h2>
+                    </div>
+                    <span class="metric">R² {{ '%.4f'|format(result.r_squared) }}</span>
+                </div>
+
+                <div class="metrics-grid">
+                    {% for parameter in result.parameters %}
+                        <div class="metric-box">
+                            <span>{{ parameter.name }}</span>
+                            <strong>{{ parameter.formatted }}</strong>
+                        </div>
+                    {% endfor %}
+                    <div class="metric-box">
+                        <span>RMSE</span>
+                        <strong>{{ '%.6g'|format(result.rmse) }}</strong>
+                    </div>
+                </div>
+
+                <p class="equation">{{ result.equation }}</p>
+                <img class="plot" src="data:image/png;base64,{{ plot_base64 }}" alt="Grafiek van de meetdata en fit">
+
+                <div class="download-row">
+                    <a href="{{ url_for('download_result', result_id=result_id, file_type='plot') }}">Download PNG</a>
+                    <a href="{{ url_for('download_result', result_id=result_id, file_type='data') }}">Download CSV</a>
+                    <a href="{{ url_for('download_result', result_id=result_id, file_type='summary') }}">Download resultaten</a>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Tekst voor je verslag</h2>
+                <textarea id="report-text" rows="7" readonly>{{ result.report_text }}</textarea>
+                <button class="secondary" type="button" onclick="copyReport()">Kopieer tekst</button>
+            </section>
+        {% else %}
+            <section class="card empty-state">
+                <h2>Je resultaten verschijnen hier</h2>
+                <p>Gebruik de voorbeelddata links of upload je eigen CSV-bestand.</p>
+                <ul>
+                    <li>Lineaire, exponentiële en power-law fits</li>
+                    <li>x- en y-onzekerheden via orthogonal distance regression</li>
+                    <li>R², RMSE, parameteronzekerheden en residuen</li>
+                    <li>Downloadbare grafiek en resultatentabel</li>
+                </ul>
+            </section>
+        {% endif %}
+    </section>
+</main>
+
+<footer class="container footer">
+    <p>LabFit is een hulpmiddel. Controleer altijd of het gekozen model fysisch passend is en inspecteer de residuen.</p>
+</footer>
+
+<script>
+function copyReport() {
+    const field = document.getElementById('report-text');
+    navigator.clipboard.writeText(field.value).then(() => {
+        const button = document.querySelector('button.secondary');
+        const original = button.textContent;
+        button.textContent = 'Gekopieerd!';
+        setTimeout(() => button.textContent = original, 1400);
+    });
+}
+</script>
+</body>
+</html>
