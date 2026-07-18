@@ -11,24 +11,24 @@
     <div class="container">
         <span class="badge">Physics data analysis</span>
         <h1>LabFit</h1>
-        <p>Upload of plak meetdata en ontvang direct een fit, parameteronzekerheden, R², residuen en een publiceerbare grafiek.</p>
+        <p>Upload or attach data and receive a best fit, parameter insecurities, R², residuals, and a graph.</p>
     </div>
 </header>
 
 <main class="container layout">
     <section class="card input-card">
-        <h2>1. Voer je meetdata in</h2>
+        <h2>1. Input data</h2>
         <form method="POST" enctype="multipart/form-data">
-            <label for="csv_file">CSV-bestand uploaden</label>
+            <label for="csv_file">Upload CSV-file</label>
             <input id="csv_file" name="csv_file" type="file" accept=".csv,.txt">
-            <p class="hint">Verwachte kolommen: <code>x</code>, <code>y</code> en optioneel <code>sigma_x</code>, <code>sigma_y</code>.</p>
+            <p class="hint">Expected collumns: <code>x</code>, <code>y</code> en optioneel <code>sigma_x</code>, <code>sigma_y</code>.</p>
 
             <div class="separator"><span>of</span></div>
 
-            <label for="pasted_data">Data plakken</label>
+            <label for="pasted_data">Paste data</label>
             <textarea id="pasted_data" name="pasted_data" rows="9" spellcheck="false">{{ pasted_data }}</textarea>
 
-            <h2>2. Kies model en labels</h2>
+            <h2>2. Choose model and labels</h2>
             <label for="model">Fitmodel</label>
             <select id="model" name="model">
                 {% for key, model in models.items() %}
@@ -47,24 +47,24 @@
                 </div>
             </div>
 
-            <label for="plot_title">Grafiektitel</label>
+            <label for="plot_title">Graphtitle</label>
             <input id="plot_title" name="plot_title" value="{{ plot_title }}">
 
-            <button type="submit">Analyseer data</button>
+            <button type="submit">Analyse data</button>
         </form>
     </section>
 
     <section class="results-column">
         {% if error %}
             <div class="card error-card">
-                <h2>De analyse kon niet worden uitgevoerd</h2>
+                <h2>The analyses could not be conducted</h2>
                 <p>{{ error }}</p>
             </div>
         {% elif result %}
             <section class="card">
                 <div class="result-heading">
                     <div>
-                        <span class="badge success">Fit voltooid</span>
+                        <span class="badge success">Fit completed</span>
                         <h2>{{ result.model_label }}</h2>
                     </div>
                     <span class="metric">R² {{ '%.4f'|format(result.r_squared) }}</span>
@@ -84,29 +84,29 @@
                 </div>
 
                 <p class="equation">{{ result.equation }}</p>
-                <img class="plot" src="data:image/png;base64,{{ plot_base64 }}" alt="Grafiek van de meetdata en fit">
+                <img class="plot" src="data:image/png;base64,{{ plot_base64 }}" alt="Graph of data and best fit">
 
                 <div class="download-row">
                     <a href="{{ url_for('download_result', result_id=result_id, file_type='plot') }}">Download PNG</a>
                     <a href="{{ url_for('download_result', result_id=result_id, file_type='data') }}">Download CSV</a>
-                    <a href="{{ url_for('download_result', result_id=result_id, file_type='summary') }}">Download resultaten</a>
+                    <a href="{{ url_for('download_result', result_id=result_id, file_type='summary') }}">Download results</a>
                 </div>
             </section>
 
             <section class="card">
-                <h2>Tekst voor je verslag</h2>
+                <h2>Text for report</h2>
                 <textarea id="report-text" rows="7" readonly>{{ result.report_text }}</textarea>
                 <button class="secondary" type="button" onclick="copyReport()">Kopieer tekst</button>
             </section>
         {% else %}
             <section class="card empty-state">
-                <h2>Je resultaten verschijnen hier</h2>
-                <p>Gebruik de voorbeelddata links of upload je eigen CSV-bestand.</p>
+                <h2>Your results appear here</h2>
+                <p>Use the example data or upload your own file</p>
                 <ul>
-                    <li>Lineaire, exponentiële en power-law fits</li>
-                    <li>x- en y-onzekerheden via orthogonal distance regression</li>
-                    <li>R², RMSE, parameteronzekerheden en residuen</li>
-                    <li>Downloadbare grafiek en resultatentabel</li>
+                    <li>Lineaire, exponential, and power-law fits</li>
+                    <li>x- en y-error via orthogonal distance regression</li>
+                    <li>R², RMSE, parameter error, and residual</li>
+                    <li>Download graph and result table</li>
                 </ul>
             </section>
         {% endif %}
@@ -114,7 +114,7 @@
 </main>
 
 <footer class="container footer">
-    <p>LabFit is een hulpmiddel. Controleer altijd of het gekozen model fysisch passend is en inspecteer de residuen.</p>
+    <p>LabFit is an supporting tool. Always check if the chosen model fits.</p>
 </footer>
 
 <script>
