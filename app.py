@@ -44,12 +44,12 @@ def power_law(beta: np.ndarray, x: np.ndarray) -> np.ndarray:
 
 MODELS: dict[str, dict] = {
     "linear": {
-        "label": "Lineair: y = ax + b",
+        "label": "Linear: y = ax + b",
         "func": linear,
         "parameters": ["a", "b"],
     },
     "exponential": {
-        "label": "Exponentieel: y = a·exp(bx) + c",
+        "label": "Exponential: y = a·exp(bx) + c",
         "func": exponential,
         "parameters": ["a", "b", "c"],
     },
